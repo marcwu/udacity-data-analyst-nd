@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+</head>
+
+
+
+<body>
+    <script type="text/javascript">
+        function draw(data) {            
+            data.forEach(function(d) {
+                d.Count = +1;
+            });
+            var svg = dimple.newSvg("body", 800, 600);
+            var myChart = new dimple.chart(svg, data);
+            var x = myChart.addCategoryAxis("x", ["Pclass"]);
+            x.addOrderRule(["First", "Second", "Third"]);
+            myChart.addPctAxis("y", "Count");
+            myChart.addSeries("Survived", dimple.plot.bar);
+            myChart.addLegend(10, 10, 200, 10, "right");
+            myChart.draw();
+        };
+
+
+        d3.csv("titanic_data.csv", draw); 
+    </script>
+</body>
+
+
+</html>

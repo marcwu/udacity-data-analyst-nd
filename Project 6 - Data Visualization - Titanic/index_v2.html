@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+
+    <style type="text/css">
+        h1,h2 {text-align: center;}
+        userselection {
+                margin-top : 180px;                
+                float : left;
+        }
+
+    </style>
+</head>
+
+
+
+<body>
+    <h1>Data Visualization: Titanic</h1>
+    <h2>Casualties and Survivors</h2>
+    <p>
+        The sinking of the RMS Titanic during her maiden voyage in mid-April
+        1912 is perhaps the most famous maritime disaster of all time.
+        Shockingly, over two-thirds of the 2224 people on board died in
+        the course of the events. 
+        <br>
+        <br>
+        One major contributing factor was, besides poor evacuation management, 
+        that there were not enough lifeboats available. This created a moral
+        dilemma for passengers and crewmen alike as to who should be saved.
+        "Women and children first!" may come to the reader's mind initially,
+        but was it also the case? 
+        <br>
+        <br>
+        This visualization is based on a data set of 891 passengers
+        containing various information like gender, age, survival, and more.
+        The visualization shows the casualty and survivor numbers with focus
+        on the socio-economic status of the passengers as indicated by the
+        passenger class. In addition to that, it allows to distinguish further
+        via gender or age and to display the chart in either absolute or relative numbers.
+    </p>
+
+
+    <userselection>
+        Category
+        <br>
+        <select id="option_1" class="input" name="category" size="3">
+            <option value="none" selected>None</option>
+            <option value="sex">by Sex</option>
+            <option value="age" >by Age</option>
+        </select>
+        <br>
+        <br>
+        Measure
+        <br>
+        <select id="option_2" class="input" name="measure" size="2">
+            <option value="percentage" selected>Percentage</option>
+            <option value="count">Count</option>
+        </select>
+    </userselection>
+
+
+
+
+    <script type="text/javascript">
+        function draw(data) {            
+            //// data preprocessing
+            data.forEach(function(d) {
+                // add new columns Count and AgeGroup
+                d.Count = +1;
+
+                if (d.Age === "") {
+                    d.AgeGroup = "Age unknown";
+                }
+                else if (d.Age < 18) {
+                    d.AgeGroup = "Child";
+                }
+                else {
+                    d.AgeGroup = "Adult";
+                }
+
+                // replace numeric values with strings
+                d.Survived = ["Perished", "Survived"][d.Survived];
+                d.Pclass = ["First", "Second", "Third"][d.Pclass - 1];
+
+                // capitalize female/male
+                d.Sex = d.Sex[0].toUpperCase() + d.Sex.substring(1);
+            });
+
+
+
+            var svg = dimple.newSvg("body", 1000, 600);
+            var myChart = new dimple.chart(svg, data);
+
+
+            // add ordinal x-axis according to user selection 
+            var category = d3.select("#option_1").node().value; 
+            if (category === "sex") {
+                var x = myChart.addCategoryAxis("x", ["Pclass", "Sex"]);
+                x.addGroupOrderRule(["Female", "Male"]);
+            }
+            else if (category === "age") {
+                var x = myChart.addCategoryAxis("x", ["Pclass", "AgeGroup"])
+                x.addGroupOrderRule(["Child", "Adult", "Age unknown"]);
+
+            }
+            else if (category === "none") {
+                var x = myChart.addCategoryAxis("x", ["Pclass"]);
+            }
+
+
+            x.addOrderRule(["First", "Second", "Third"]);
+            x.title = "Passenger Class";
+            
+
+            // display chart in units of measurement selected by the user
+            var measure = d3.select("#option_2").node().value; 
+            if (measure === "count") {
+                var y = myChart.addMeasureAxis("y", "Count");
+                y.title = "Number of Passengers";
+            }
+            else if (measure === "percentage") {
+                var y = myChart.addPctAxis("y", "Count");
+                y.title = "Percentage of Passengers";
+            }
+
+
+            var mySeries = myChart.addSeries("Survived", dimple.plot.bar);
+            mySeries.addOrderRule(["Survived", "Perished"]);
+            var myLegend = myChart.addLegend(10, 10, 500, 10, "right");
+            
+
+            mySeries.getTooltipText = function(e) {
+                //console.log(e);
+                perc = Math.round(e.height * 1000) / 10;
+                return [e.aggField, e.xField[1],
+                        e.cx + " Class",
+                        "Percentage: " + perc + "%",
+                        "Count: " + e.yCount];
+            };
+
+
+            myChart.draw(1000);
+
+        
+            mySeries.afterDraw = function (shape, data) {
+                var myShape = d3.select(shape),
+                  rect = {
+                    x: parseFloat(myShape.attr("x")),
+                    y: parseFloat(myShape.attr("y")),
+                    width: parseFloat(myShape.attr("width")),
+                    height: parseFloat(myShape.attr("height"))
+                  };
+
+                svg.append("text")
+                .attr("x", rect.x + rect.width / 2)
+                .attr("y", rect.y - 2)
+                .style("text-anchor", "middle")
+                .style("font-size", "11px")
+                .style("opacity", 0.8)
+                // Prevent text cursor on hover and allow tooltips
+                .style("pointer-events", "none")
+                .text(data.xField[1]);
+            };
+        };
+
+
+
+
+        function updateChart() {
+            d3.select("svg").remove();
+            d3.select("h3").remove();
+            d3.csv( "titanic_data.csv", draw );
+        };
+
+
+
+
+        d3.selectAll(".input").on("click", updateChart);
+        d3.csv("titanic_data.csv", draw); 
+    </script>
+</body>
+
+
+</html>

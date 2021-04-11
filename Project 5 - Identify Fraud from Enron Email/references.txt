@@ -1,0 +1,13 @@
+References
+
+
+"I hereby confirm that this submission is my work. I have cited above the origins of any parts of the submission that were taken from Websites, books, forums, blog posts, github repositories, etc."
+
+
+https://en.wikipedia.org/wiki/Enron_scandal
+
+http://www.simafore.com/blog/bid/62333/4-key-advantages-of-using-decision-trees-for-predictive-analytics
+
+http://stackoverflow.com/questions/13610074/is-there-a-rule-of-thumb-for-how-to-divide-a-dataset-into-training-and-validatio
+
+https://discussions.udacity.com/t/feedback-on-final-project/38787

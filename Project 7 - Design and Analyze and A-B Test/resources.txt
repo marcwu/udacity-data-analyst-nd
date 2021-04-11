@@ -1,0 +1,8 @@
+https://en.wikipedia.org/wiki/Bonferroni_correction
+https://discussions.udacity.com/t/need-help-with-understanding-the-results-of-net-conversion/187497
+https://discussions.udacity.com/t/when-to-use-bonferroni-correction/37713
+https://discussions.udacity.com/t/final-project-hypothesis/37176
+https://discussions.udacity.com/t/final-lesson-duration-and-exposure-no-idea-how-to-progress/163802
+https://discussions.udacity.com/t/risk-accessment/206307
+http://www.evanmiller.org/ab-testing/sample-size.html
+http://graphpad.com/quickcalcs/binomial1.cfm
